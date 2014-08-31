@@ -19,6 +19,9 @@ SimpleTemplate.defaults["get_url"] = app.get_url
 def images(path):
 	return static_file(path, root='images')
 
+@app.route('/')
+def base():
+	return static_file('index.html', root='.')
 
 @app.route('/<user>')
 @app.route('/<user>/')
