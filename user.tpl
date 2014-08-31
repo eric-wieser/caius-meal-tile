@@ -45,6 +45,6 @@
 	</style>
 	<body role="application">
 		<h1>Hello {{user}}!</h1>
-		<p>Pin this page to your start screen to get information about caius hall.</p>
+		<p>Pin this page to your start screen on windows phone 8 to get information about caius hall.</p>
 	</body>
 </html>
