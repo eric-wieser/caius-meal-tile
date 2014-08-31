@@ -74,18 +74,22 @@ class Menu(object):
 		elif len(courses) == 3:
 			bread_and_starters, mains, dessert = courses
 			bread, starters = bread_and_starters.split('\n', 1)
+		else:
+			raise ValueError("Could not parse menu", data)
 
-		starters = re.split(r'\s*or\s*', starters, 1)
+		starters = re.split(r'(?i)\s*or\s*', starters, 1)
 		if len(starters) == 2:
 			self.soup, self.starter = starters
 		else:
 			self.soup = ''
-			self.starter = starters
+			self.starter = starters[0]
 
 
 		self.bread = bread
 		self.main, self.sides = re.split(r'\n\n+', mains, 1)
 		self.dessert = dessert
+
+		self.sides = ', '.join(side.strip() for side in re.split(r'\n+', self.sides))
 
 		veg_courses = re.split(r'\n+Vegetarian\s*(?:-\s*\n?|\n)', dessert)
 		if veg_courses:
@@ -93,6 +97,15 @@ class Menu(object):
 			self.main_v = re.sub(r'\s+', ' ', veg_courses[1])
 
 		self.main = re.sub(r'\s+', ' ', self.main)
+
+		# remove html entities
+		self.bread = BeautifulSoup(self.bread).get_text()
+		self.soup = BeautifulSoup(self.soup).get_text()
+		self.starter = BeautifulSoup(self.starter).get_text()
+		self.main = BeautifulSoup(self.main).get_text()
+		self.main_v = BeautifulSoup(self.main_v).get_text()
+		self.sides = BeautifulSoup(self.sides).get_text()
+		self.dessert = BeautifulSoup(self.dessert).get_text()
 
 		return self
 
