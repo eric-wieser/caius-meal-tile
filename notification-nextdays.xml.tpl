@@ -13,7 +13,7 @@
 <tile>
 	<visual lang='en-US' version='2'>
 		<binding template="TileSquare71x71Image" branding="none">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png'.format(status)) }}"/>
+			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
 		</binding>
 
 		<binding template="TileSquare150x150Text01" branding="name">
