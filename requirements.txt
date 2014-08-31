@@ -1,0 +1,4 @@
+bottle==0.11.6
+requests==2.2.0
+beautifulsoup4==4.3.2
+ravenclient==0.2
