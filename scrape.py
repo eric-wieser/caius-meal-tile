@@ -65,7 +65,7 @@ class Menu(object):
 
 		# remove obvious line wrapping
 		courses = [
-			re.sub(r'\([^)]+\)', lambda l: re.sub('\s+', ' ', l), course)
+			re.sub(r'\([^)]+\)', lambda l: re.sub('\s+', ' ', l.group(0)), course)
 			for course in courses
 		]
 
@@ -105,7 +105,7 @@ class Hall(object):
 		self.date = date
 		self.type = hall_type
 
-		req = s.get(urls.event(hall_type.id, today))
+		req = s.get(urls.event(hall_type.id, date))
 		soup = BeautifulSoup(req.text)
 
 		menu_elem = soup.find(class_='menu')
@@ -157,12 +157,11 @@ hall_types = [
 	HallType(name='formal', id=323)
 ] + get_hall_types()
 
-today = datetime(2014, 06, 03)
 
 
-def get_user_hall(user):
+def get_user_hall(user, day):
 	halls = [
-		Hall(hall_type, today)
+		Hall(hall_type, day)
 		for hall_type in hall_types
 	]
 	for hall in halls:

@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import itertools
+
 from bottle import *
 import scrape
 
@@ -34,10 +36,13 @@ def images(user):
 def images(user):
 	return dict(user=user)
 
-@app.route('/<user>/notification.xml')
-@view('notifications.xml.tpl')
+
+today = datetime(2014, 06, 03)
+
+@app.route('/<user>/notification-today.xml')
+@view('notification-today.xml.tpl')
 def get_notifications(user):
-	hall, is_booked = scrape.get_user_hall(user)
+	hall, is_booked = scrape.get_user_hall(user, today)
 	if not is_booked:
 		status = 'closed'
 	elif 'formal' in hall.type.name:
@@ -48,6 +53,35 @@ def get_notifications(user):
 	return dict(
 		status=status,
 		hall=hall
+	)
+
+def get_day_book_status(user, start_date):
+	for i in range(100):
+		res = bunch(
+			date=start_date + timedelta(days=i),
+			hall=None
+		)
+
+		hall, is_booked = scrape.get_user_hall(user, res.date)
+		if is_booked:
+			res.hall = hall
+		if hall:
+			yield res
+
+@app.route('/<user>/notification-nextdays.xml')
+@view('notification-nextdays.xml.tpl')
+def get_notifications(user):
+	hall, is_booked = scrape.get_user_hall(user, today)
+	if not is_booked:
+		status = 'closed'
+	elif 'formal' in hall.type.name:
+		status = 'booked-formal'
+	else:
+		status = 'booked'
+
+	return dict(
+		status=status,
+		days=list(itertools.islice(get_day_book_status(user, today), 5))
 	)
 
 app.run(host=host, port=port, debug=True)

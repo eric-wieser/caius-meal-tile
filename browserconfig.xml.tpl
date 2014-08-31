@@ -8,7 +8,8 @@
       <TileColor>#7C431C</TileColor>
     </tile>
     <notification>
-      <polling-uri src="/{{user}}/notification.xml"/>
+      <polling-uri src="/{{user}}/notification-today.xml"/>
+      <polling-uri2 src="/{{user}}/notification-nextdays.xml"/>
       <frequency>30</frequency>
     </notification>
   </msapplication>
