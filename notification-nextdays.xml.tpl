@@ -16,15 +16,13 @@
 			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png'.format(status)) }}"/>
 		</binding>
 
-		<binding template="TileSquare150x150PeekImageAndText01" branding="name">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png'.format(status)) }}"/>
+		<binding template="TileSquare150x150Text01" branding="name">
 			% for i, data in enumerate(days[:4]):
 				<text id="{{i}}">{{stringify(data)}}</text>
 			% end
 		</binding>
 
-		<binding template="TileWide310x150PeekImage02" branding="name">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}-wide.png'.format(status)) }}"/>
+		<binding template="TileWide310x150Text01" branding="name">
 			% for i, data in enumerate(days[:5]):
 				<text id="{{i}}">{{stringify(data)}}</text>
 			% end
