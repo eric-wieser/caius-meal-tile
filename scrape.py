@@ -96,18 +96,25 @@ class Menu(object):
 
 		return self
 
-class Hall(object):
-	def __init__(self, hall_id, date):
-		self.date = date
-		self.type_id = hall_id
+from collections import namedtuple
 
-		req = s.get(urls.event(hall_id, today))
+HallType = namedtuple("HallType", "id name")
+
+class Hall(object):
+	def __init__(self, hall_type, date):
+		self.date = date
+		self.type = hall_type
+
+		req = s.get(urls.event(hall_type.id, today))
 		soup = BeautifulSoup(req.text)
 
 		menu_elem = soup.find(class_='menu')
 
 		if menu_elem:
-			self.menu = Menu().load(menu_elem.decode_contents(formatter="html"))
+			self.menu = Menu().load(
+				menu_elem.decode_contents(formatter="html"),
+				is_cafeteria='cafeteria' in hall_type.name
+			)
 		else:
 			self.menu = None
 
@@ -117,7 +124,15 @@ class Hall(object):
 
 
 
-def get_hall_ids():
+def normalize_hall_name(name):
+	name = name.strip().lower()
+	name = re.sub(r' +\(?early\)?', '', name)
+	name = re.sub(r' +hall$', '', name)
+	name = re.sub(r'1st', 'first', name)
+	name = re.sub(r'^pre term', 'pre-term', name)
+	return name
+
+def get_hall_types():
 	req = s.get(urls.root)
 	soup = BeautifulSoup(req.text)
 
@@ -129,19 +144,26 @@ def get_hall_ids():
 	a_tags = table.find_all('a')
 
 	return [
-		re.match(r'\?event=(\d+)', a['href']).group(1)
+		HallType(
+			name=normalize_hall_name(a.get_text()),
+			id=re.match(r'\?event=(\d+)', a['href']).group(1)
+		)
 		for a in a_tags
 	]
 
 
-hall_ids = [323] + get_hall_ids()
+hall_types = [
+	HallType(name='first', id=322),
+	HallType(name='formal', id=323)
+] + get_hall_types()
+
 today = datetime(2014, 06, 03)
 
 
 def get_user_hall(user):
 	halls = [
-		Hall(hall_id, today)
-		for hall_id in hall_ids
+		Hall(hall_type, today)
+		for hall_type in hall_types
 	]
 	for hall in halls:
 		if user in hall.attendees:

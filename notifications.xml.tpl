@@ -6,7 +6,7 @@
 
 		<binding template="TileSquare150x150PeekImageAndText01" branding="name">
 			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png'.format(status)) }}"/>
-			<text id="1">{{ "{:%B %d}".format(hall.date) }}</text>
+			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			<text id="2">{{ hall.menu.starter }}</text>
 			<text id="3">{{ hall.menu.main }}</text>
 			<text id="4">{{ hall.menu.dessert }}</text>
@@ -14,7 +14,7 @@
 
 		<binding template="TileWide310x150PeekImage02" branding="name">
 			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}-wide.png'.format(status)) }}"/>
-			<text id="1">{{ "{:%B %d}".format(hall.date) }}</text>
+			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			<text id="2">{{ hall.menu.starter }}</text>
 			<text id="3">{{ hall.menu.main }}</text>
 			<text id="4">{{ hall.menu.sides }}</text>

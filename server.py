@@ -38,8 +38,15 @@ def images(user):
 @view('notifications.xml.tpl')
 def get_notifications(user):
 	hall, is_booked = scrape.get_user_hall(user)
+	if not is_booked:
+		status = 'closed'
+	elif 'formal' in hall.type.name:
+		status = 'booked-formal'
+	else:
+		status = 'booked'
+
 	return dict(
-		status='booked' if is_booked else 'closed',
+		status=status,
 		hall=hall
 	)
 
