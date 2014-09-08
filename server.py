@@ -4,8 +4,8 @@ import itertools
 from bottle import *
 import scrape
 
-host = 'efw27.user.srcf.net'
-port = 8101
+
+
 
 
 class bunch(object):
@@ -13,7 +13,7 @@ class bunch(object):
 		self.__dict__.update(**kwargs)
 
 app = Bottle()
-SimpleTemplate.defaults["domain"] = 'http://{}:{}'.format(host, port)
+
 SimpleTemplate.defaults["get_url"] = app.get_url
 
 
@@ -37,24 +37,6 @@ def images(user):
 	return dict(user=user)
 
 
-today = datetime(2014, 06, 03)
-
-@app.route('/<user>/notification-today.xml')
-@view('notification-today.xml.tpl')
-def get_notifications(user):
-	hall, is_booked = scrape.get_user_hall(user, today)
-	if not is_booked:
-		status = 'closed'
-	elif 'formal' in hall.type.name:
-		status = 'booked-formal'
-	else:
-		status = 'booked'
-
-	return dict(
-		status=status,
-		hall=hall
-	)
-
 def get_day_book_status(user, start_date):
 	for i in range(100):
 		res = bunch(
@@ -68,9 +50,40 @@ def get_day_book_status(user, start_date):
 		if hall:
 			yield res
 
+def get_user_halls_from(user, start_date):
+	for i in range(100):
+		date = start_date + timedelta(days=i)
+
+		hall, is_booked = scrape.get_user_hall(user, date)
+		if hall:
+			yield hall, is_booked
+
+		print "Failed {}".format(i)
+
+@app.route('/<user>/notification-today.xml')
+@view('notification-today.xml.tpl')
+def get_notifications(user):
+	today = datetime.now()
+	hall, is_booked = next(get_user_halls_from(user, today))
+	if not is_booked:
+		status = 'closed'
+	elif 'formal' in hall.type.name:
+		status = 'booked-formal'
+	else:
+		status = 'booked'
+
+	print repr(hall)
+
+	return dict(
+		status=status,
+		hall=hall
+	)
+
+
 @app.route('/<user>/notification-nextdays.xml')
 @view('notification-nextdays.xml.tpl')
 def get_notifications(user):
+	today = datetime.now()
 	hall, is_booked = scrape.get_user_hall(user, today)
 	if not is_booked:
 		status = 'closed'
@@ -85,4 +98,12 @@ def get_notifications(user):
 	)
 
 if __name__ == '__main__':
+	host = 'efw27.user.srcf.net'
+	port = 8101
+	SimpleTemplate.defaults["domain"] = 'http://{}:{}'.format(host, port)
 	app.run(host=host, port=port, debug=True)
+else:
+	import bottle
+	bottle.debug(True)
+	SimpleTemplate.defaults["domain"] = 'http://meal-tile.efw27.user.srcf.net:8989'
+

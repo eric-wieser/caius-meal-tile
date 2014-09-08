@@ -113,6 +113,9 @@ from collections import namedtuple
 
 HallType = namedtuple("HallType", "id name")
 
+class HallError(Exception):
+	pass
+
 class Hall(object):
 	def __init__(self, hall_type, date):
 		self.date = date
@@ -120,6 +123,12 @@ class Hall(object):
 
 		req = s.get(urls.event(hall_type.id, date))
 		soup = BeautifulSoup(req.text)
+
+
+		error_elem = soup.find(class_='error')
+
+		if error_elem:
+			raise HallError(error_elem.get_text())
 
 		menu_elem = soup.find(class_='menu')
 
@@ -173,10 +182,16 @@ hall_types = [
 
 
 def get_user_hall(user, day):
-	halls = [
-		Hall(hall_type, day)
-		for hall_type in hall_types
-	]
+
+	def get_halls():
+		for hall_type in hall_types:
+			try:
+				yield Hall(hall_type, day)
+			except HallError:
+				pass
+
+	halls = list(get_halls())
+
 	for hall in halls:
 		if user in hall.attendees:
 			return hall, True
@@ -184,5 +199,8 @@ def get_user_hall(user, day):
 	for hall in halls:
 		if hall.menu:
 			return hall, False
+
+	if halls:
+		return halls[0], False
 
 	return None, False
