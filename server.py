@@ -1,11 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import itertools
 
 from bottle import *
 import scrape
-
-
-
 
 
 class bunch(object):
@@ -63,7 +60,7 @@ def get_user_halls_from(user, start_date):
 @app.route('/<user>/notification-today.xml')
 @view('notification-today.xml.tpl')
 def get_notifications(user):
-	today = datetime.now()
+	today = date.today()
 	hall, is_booked = next(get_user_halls_from(user, today))
 	if not is_booked:
 		status = 'closed'
@@ -83,7 +80,7 @@ def get_notifications(user):
 @app.route('/<user>/notification-nextdays.xml')
 @view('notification-nextdays.xml.tpl')
 def get_notifications(user):
-	today = datetime.now()
+	today = date.today()
 	hall, is_booked = scrape.get_user_hall(user, today)
 	if not is_booked:
 		status = 'closed'
