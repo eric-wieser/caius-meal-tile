@@ -1,11 +1,13 @@
 import re
 import os
+from collections import namedtuple
 
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import ravenclient
+import cache
 
 s = requests.Session()
 
@@ -109,7 +111,6 @@ class Menu(object):
 
 		return self
 
-from collections import namedtuple
 
 HallType = namedtuple("HallType", "id name")
 
@@ -117,11 +118,25 @@ class HallError(Exception):
 	pass
 
 class Hall(object):
+	__new__ = cache.timed(timedelta(hours=12))(object.__new__)
+
 	def __init__(self, hall_type, date):
 		self.date = date
 		self.type = hall_type
+		self.url = urls.event(hall_type.id, date)
 
-		req = s.get(urls.event(hall_type.id, date))
+		self.refresh()
+
+	def __hash__(self):
+		return hash((self.date, self.type))
+
+	def __eq__(self, other):
+		return (self.date, self.type) == (other.date, other.type)
+
+	@cache.timed(timedelta(minutes=30))
+	def refresh(self):
+		print "Requesting {}".format(self.url)
+		req = s.get(self.url)
 		soup = BeautifulSoup(req.text)
 
 
@@ -168,7 +183,7 @@ def get_hall_types():
 	return [
 		HallType(
 			name=normalize_hall_name(a.get_text()),
-			id=re.match(r'\?event=(\d+)', a['href']).group(1)
+			id=int(re.match(r'\?event=(\d+)', a['href']).group(1))
 		)
 		for a in a_tags
 	]
@@ -180,9 +195,7 @@ hall_types = [
 ] + get_hall_types()
 
 
-
-def get_user_hall(user, day):
-
+def halls_on(day):
 	def get_halls():
 		for hall_type in hall_types:
 			try:
@@ -190,7 +203,13 @@ def get_user_hall(user, day):
 			except HallError:
 				pass
 
-	halls = list(get_halls())
+	return list(get_halls())
+
+
+
+
+def get_user_hall(user, day):
+	halls = halls_on(day)
 
 	for hall in halls:
 		if user in hall.attendees:
