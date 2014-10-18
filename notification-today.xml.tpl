@@ -25,7 +25,7 @@
 			% if m:
 				<text id="2">{{ "{} or {}".format(m.starter, m.soup) if m.soup else m.starter}}</text>
 				<text id="3">{{ m.main if not vegetarian else m.main_v }}</text>
-				<text id="4">{{ m.sides }}</text>
+				<text id="4">{{ ', '.join(m.sides) }}</text>
 				<text id="5">{{ m.dessert }}</text>
 			% else:
 				<text id="2">menu not published</text>

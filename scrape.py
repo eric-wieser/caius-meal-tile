@@ -41,6 +41,10 @@ class urls(object):
 		return '{}/index.php?event={}&date={:%Y-%m-%d}'.format(cls.root, hall_id, day)
 
 
+def escape(s):
+	return BeautifulSoup(s).get_text()
+
+
 class Menu(object):
 	def __init__(self):
 		self.bread = ''
@@ -91,7 +95,7 @@ class Menu(object):
 		self.main, self.sides = re.split(r'\n\n+', mains, 1)
 		self.dessert = dessert
 
-		self.sides = ', '.join(side.strip() for side in re.split(r'\n+', self.sides))
+		self.sides = [side.strip() for side in re.split(r'\n+', self.sides)]
 
 		veg_courses = re.split(r'\n+Vegetarian\s*(?:-\s*\n?|\n)', dessert)
 		if veg_courses:
@@ -101,13 +105,13 @@ class Menu(object):
 		self.main = re.sub(r'\s+', ' ', self.main)
 
 		# remove html entities
-		self.bread = BeautifulSoup(self.bread).get_text()
-		self.soup = BeautifulSoup(self.soup).get_text()
-		self.starter = BeautifulSoup(self.starter).get_text()
-		self.main = BeautifulSoup(self.main).get_text()
-		self.main_v = BeautifulSoup(self.main_v).get_text()
-		self.sides = BeautifulSoup(self.sides).get_text()
-		self.dessert = BeautifulSoup(self.dessert).get_text()
+		self.bread = escape(self.bread)
+		self.soup = escape(self.soup)
+		self.starter = escape(self.starter)
+		self.main = escape(self.main)
+		self.main_v = escape(self.main_v)
+		self.sides = map(escape, self.sides)
+		self.dessert = escape(self.dessert)
 
 		return self
 
