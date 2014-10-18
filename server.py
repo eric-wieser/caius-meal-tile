@@ -178,7 +178,7 @@ def calendar_file(user):
 				'{}.{}.meal-tile@efw27.user.srcf.net'.format(hall.type.name, hall.date.isoformat())
 			)
 
-			for crsid in hall.attendees:
+			for crsid in sorted(hall.attendees):
 				attendee = icalendar.vCalAddress('MAILTO:{}@cam.ac.uk'.format(crsid))
 				attendee.params['cn'] = icalendar.vText(hall.attendee_names[crsid])
 				attendee.params['role'] = icalendar.vText('REQ-PARTICIPANT')
