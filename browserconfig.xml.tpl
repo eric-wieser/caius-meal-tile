@@ -8,8 +8,8 @@
       <TileColor>#7C431C</TileColor>
     </tile>
     <notification>
-      <polling-uri src="/{{user}}/notification-today.xml"/>
-      <polling-uri2 src="/{{user}}/notification-nextdays.xml"/>
+      <polling-uri src="{{ get_url('nt-today', user=user) }}"/>
+      <polling-uri2 src="{{ get_url('nt-nextdays', user=user) }}"/>
       <frequency>30</frequency>
     </notification>
   </msapplication>

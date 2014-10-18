@@ -57,10 +57,13 @@ class Menu(object):
 
 		self.dessert = ''
 
+		self.error = None
+
 	def load(self, data, is_cafeteria=False):
 		data = re.sub(r'\n', ' ', data)
 		lines = re.split(r'<br(?: ?\/?)>', data)
 		lines = [line.strip() for line in lines]
+		self.raw = '\n'.join(escape(l) for l in lines)
 
 		if not is_cafeteria and lines[1] == '':
 			lines[1] = '*'
@@ -74,12 +77,24 @@ class Menu(object):
 			re.sub(r'\([^)]+\)', lambda l: re.sub('\s+', ' ', l.group(0)), course)
 			for course in courses
 		]
+		courses = [
+			re.sub(r'\s*(\nand|and\n)\s*', ' and ', course)
+			for course in courses
+		]
+		courses = [
+			re.sub(r'\s*(\nor|or\n)\s*', ' or ', course)
+			for course in courses
+		]
 
 		if len(courses) == 4:
 			bread, starters, mains, dessert = courses
 		elif len(courses) == 3:
 			bread_and_starters, mains, dessert = courses
-			bread, starters = bread_and_starters.split('\n', 1)
+			bread_and_starters = bread_and_starters.split('\n', 1)
+			if len(bread_and_starters) == 1:
+				bread, starters = [''] + bread_and_starters
+			else:
+				bread, starters = bread_and_starters
 		else:
 			raise ValueError("Could not parse menu", data)
 
@@ -103,6 +118,7 @@ class Menu(object):
 			self.main_v = re.sub(r'\s+', ' ', veg_courses[1])
 
 		self.main = re.sub(r'\s+', ' ', self.main)
+
 
 		# remove html entities
 		self.bread = escape(self.bread)
@@ -152,10 +168,14 @@ class Hall(object):
 		menu_elem = soup.find(class_='menu')
 
 		if menu_elem:
-			self.menu = Menu().load(
-				menu_elem.decode_contents(formatter="html"),
-				is_cafeteria='cafeteria' in hall_type.name
-			)
+			self.menu = Menu()
+			try:
+				self.menu.load(
+					menu_elem.decode_contents(formatter="html"),
+					is_cafeteria='cafeteria' in self.type.name
+				)
+			except Exception as e:
+				self.menu.error = e
 		else:
 			self.menu = None
 
