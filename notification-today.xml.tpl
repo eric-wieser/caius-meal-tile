@@ -10,7 +10,7 @@
 			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			% if m:
 				<text id="2">{{ m.starter }}</text>
-				<text id="3">{{ m.main }}</text>
+				<text id="3">{{ m.main if not vegetarian else m.main_v }}</text>
 				<text id="4">{{ m.dessert }}</text>
 			% else:
 				<text id="2">menu not</text>
@@ -24,7 +24,7 @@
 			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			% if m:
 				<text id="2">{{ "{} or {}".format(m.starter, m.soup) if m.soup else m.starter}}</text>
-				<text id="3">{{ m.main }}</text>
+				<text id="3">{{ m.main if not vegetarian else m.main_v }}</text>
 				<text id="4">{{ m.sides }}</text>
 				<text id="5">{{ m.dessert }}</text>
 			% else:
