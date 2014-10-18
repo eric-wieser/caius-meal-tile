@@ -132,7 +132,14 @@ class Menu(object):
 		return self
 
 
-HallType = namedtuple("HallType", "id name")
+class HallType(namedtuple("HallType", "id name")):
+	@property
+	def full_name(self):
+		if 'hall' in self.name:
+			return self.name
+		else:
+			return self.name + ' hall'
+
 
 class HallError(Exception):
 	pass
@@ -181,7 +188,20 @@ class Hall(object):
 
 		guest_list = soup.find('table', class_='list').find_all('td', title=True)
 
+		metadata = [
+			tuple(x.get_text() for x in row.find_all('td'))
+			for row in soup.find('table', class_='table').find_all('tr')
+		]
+		self.metadata = {
+			k.rstrip(':').lower(): v
+			for k, v in metadata
+		}
+		self.start_time = datetime.strptime(
+			self.metadata['start time'], '%I:%M%p'  # ie '7:05pm'
+		).time()
+
 		self.attendees = {guest['title'] for guest in guest_list}
+		self.attendee_names = {guest['title']: guest.get_text().strip() for guest in guest_list}
 
 
 

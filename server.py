@@ -1,12 +1,14 @@
-from datetime import date, timedelta
 import itertools
 from datetime import date, datetime, timedelta
 from collections import namedtuple
 
+import icalendar
+import pytz
 from bottle import *
 
 import scrape
 
+timezone = pytz.timezone("Europe/London")
 
 # utils for scraping
 class bunch(object):
@@ -140,6 +142,56 @@ def notifications_nextdays(user):
 		status=status,
 		days=list(itertools.islice(get_day_book_status(user.crsid, today), 5))
 	)
+
+@app.route('/<user:user>.ics')
+def calendar_file(user):
+	start_date = date.today() - timedelta(days=7)
+
+	cal = icalendar.Calendar()
+	cal['prodid'] = '-//Eric Wieser//Caius Meal Tile//EN'
+	cal['version'] = '2.0'
+	cal['x-wr-calname'] = 'Caius Hall' + request.query_string
+	cal['x-wr-caldesc'] = 'Hall bookings'
+
+	bookings = itertools.islice(get_day_book_status(user.crsid, start_date), 14)
+
+	for booking in bookings:
+		hall = booking.hall
+		if hall:
+			# get the start time in UTC
+			start_dt = datetime.combine(hall.date, hall.start_time)
+			start_dt = timezone.localize(start_dt).astimezone(pytz.utc)
+
+			event = icalendar.Event()
+			event['summary'] = icalendar.vText(hall.type.full_name.capitalize())
+			event['dtstart'] = icalendar.vDatetime(start_dt)
+			event['dtend'] = icalendar.vDatetime(start_dt + timedelta(minutes=50))
+			event['dtstamp'] = icalendar.vDatetime(datetime.now())
+			event['description'] = icalendar.vText(hall.menu.raw if hall.menu else 'No menu')
+			event['location'] = icalendar.vText(', '.join([
+				"Gonville & Caius: Old Courts",
+				"Trinity St",
+				"Cambridge",
+				"CB2 1TA"
+			]))
+			event['uid'] = icalendar.vText(
+				'{}.{}.meal-tile@efw27.user.srcf.net'.format(hall.type.name, hall.date.isoformat())
+			)
+
+			for crsid in hall.attendees:
+				attendee = icalendar.vCalAddress('MAILTO:{}@cam.ac.uk'.format(crsid))
+				attendee.params['cn'] = icalendar.vText(hall.attendee_names[crsid])
+				attendee.params['role'] = icalendar.vText('REQ-PARTICIPANT')
+				attendee.params['partstat'] = icalendar.vText('ACCEPTED')
+				attendee.params['cutype'] = icalendar.vText('INDIVIDUAL')
+
+				event.add('attendee', attendee, encode=0)
+
+			cal.add_component(event)
+
+	response.content_type = 'text/calendar; charset=UTF-8'
+	return cal.to_ical()
+
 
 if __name__ == '__main__':
 	host = 'efw27.user.srcf.net'

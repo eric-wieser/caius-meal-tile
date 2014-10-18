@@ -3,6 +3,8 @@
 	<head>
 		<title>Caius hall tiles</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+		<meta name="viewport" content="width=device-width" />
 	</head>
 	<style>
 		body {
@@ -30,10 +32,14 @@
 			height: 70px;
 		}
 		.screen {
+			background: #202020;
+		}
+		.screen .inner {
 			background: black;
 			width:480px;
 			padding: 5px;
 			overflow: hidden;
+			margin: auto;
 		}
 		.sep {
 			clear: both;
@@ -41,36 +47,54 @@
 		}
 	</style>
 	<body role="application">
-		<h1>Caius hall tiles</h1>
-		<p>Fill out the following form to get your tile</p>
-		<form onsubmit="location.href = this.crsid.value; return false">
-			<label>crsid: <input name="crsid" placeholder="xyz123" /></label>
-			<input type="submit" value="Go!" />
-		</form>
-		<p>For medium and wide tiles, the reverse side shows the menu for today.</p>
-		<h2>First hall booked</h2>
-		<div class="screen">
-			<img src="images/food-booked.png" class="small"/>
-			<img src="images/food-booked-wide.png" class="wide"/>
-			<img src="images/food-booked.png" class="tiny"/>
+		<div class="container">
+			<h1>Caius hall tiles</h1>
+			<p>Fill out the following form to get your tile or calendar</p>
+			<form method="post">
+				<label>crsid: <input name="crsid" placeholder="xyz123" /></label>
+				<label>vegetarian: <input name="vegetarian" type="checkbox" /></label>
+				<input type="submit" value="Get tile!" />
+				<input type="submit" name='calendar' value="Get calendar!" />
+			</form>
+			<p>For medium and wide tiles, the reverse side shows the menu for today.</p>
+			<h2>First hall booked</h2>
 		</div>
-		<h2>Formal hall booked</h2>
 		<div class="screen">
-			<img src="images/food-booked-formal.png" class="small"/>
-			<img src="images/food-booked-formal-wide.png" class="wide"/>
-			<img src="images/food-booked-formal.png" class="tiny"/>
+			<div class="inner">
+				<img src="images/food-booked.png" class="small"/>
+				<img src="images/food-booked-wide.png" class="wide"/>
+				<img src="images/food-booked.png" class="tiny"/>
+			</div>
 		</div>
-		<h2>No hall booked</h2>
-		<div class="screen">
-			<img src="images/food-closed.png" class="small"/>
-			<img src="images/food-closed-wide.png" class="wide"/>
-			<img src="images/food-closed.png" class="tiny"/>
+		<div class="container">
+			<h2>Formal hall booked</h2>
 		</div>
-		<h2>Default tile</h2>
 		<div class="screen">
-			<img src="images/mediumtile.png" class="small"/>
-			<img src="images/widetile.png" class="wide"/>
-			<img src="images/smalltile.png" class="tiny"/>
+			<div class="inner">
+				<img src="images/food-booked-formal.png" class="small"/>
+				<img src="images/food-booked-formal-wide.png" class="wide"/>
+				<img src="images/food-booked-formal.png" class="tiny"/>
+			</div>
+		</div>
+		<div class="container">
+			<h2>No hall booked</h2>
+		</div>
+		<div class="screen">
+			<div class="inner">
+				<img src="images/food-closed.png" class="small"/>
+				<img src="images/food-closed-wide.png" class="wide"/>
+				<img src="images/food-closed.png" class="tiny"/>
+			</div>
+		</div>
+		<div class="container">
+			<h2>Default tile</h2>
+		</div>
+		<div class="screen">
+			<div class="inner">
+				<img src="images/mediumtile.png" class="small"/>
+				<img src="images/widetile.png" class="wide"/>
+				<img src="images/smalltile.png" class="tiny"/>
+			</div>
 		</div>
 	</body>
 </html>
