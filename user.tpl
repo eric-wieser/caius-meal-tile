@@ -46,12 +46,6 @@
 	</style>
 	<body role="application">
 		<div class="container">
-			<div class="alert alert-info">
-				<h1>Hello {{user}}!</h1>
-				<p>Pin this page to your start screen on windows phone 8 to get information about caius hall.</p>
-			</div>
-
-
 			% m = hall.menu
 			<div class="row">
 				<div class="col-xs-3">
@@ -69,22 +63,34 @@
 							% end
 
 							<dt>Starter</dt>
-							<dd>{{! "{}<br>or<br>{}".format(m.starter, m.soup) if m.soup else m.starter}}</dd>
+							<dd><p>
+								% if m.soup:
+									{{ m.starter }}
+									<span style="margin-left: 1em; display: block">or</span>
+									{{m.soup}}
+								% else:
+									{{ m.starter }}
+								% end
+							</p></dd>
 
 							<dt>Main</dt>
-							% if vegetarian:
-								<dd class="text-muted">{{ m.main }}</dd>
-								<dd>{{ m.main_v }}</dd>
-							% else:
-								<dd>{{ m.main }}</dd>
-								<dd class="text-muted">{{ m.main_v }}</dd>
-							% end
+							<dd><p>
+								% if vegetarian:
+									<span class="text-muted">{{ m.main }}</span>
+									<span style="margin-left: 1em; display: block">or</span>
+									{{ m.main_v }}
+								% else:
+									{{ m.main }}
+									<span style="margin-left: 1em; display: block">or</span>
+									<span class="text-muted">{{ m.main_v }}</span>
+								% end
+							</p></dd>
 
 							<dt>Sides</dt>
-							<dd>{{! '<br />'.join(m.sides) }}</dd>
+							<dd><p>{{! '<br />'.join(m.sides) }}</p></dd>
 
 							<dt>Desert</dt>
-							<dd>{{ m.dessert }}</dd>
+							<dd><p>{{ m.dessert }}</p></dd>
 						</dl>
 					% else:
 						<p>menu not published</p>
@@ -99,6 +105,11 @@
 						<button type="submit">Delete</button>
 					</form>
 				</div>
+			</div>
+
+			<div class="alert alert-info">
+				<h1>Hello {{user}}!</h1>
+				<p>Pin this page to your start screen on windows phone 8 to get information about caius hall.</p>
 			</div>
 		</div>
 	</body>
