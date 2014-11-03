@@ -69,13 +69,13 @@ def base():
 
 @app.post('/')
 def submit():
+	user = User(request.forms.crsid, bool(request.forms.vegetarian))
+
 	if request.forms.calendar:
 		_, host, _, _, _ = request.urlparts
 		return redirect('webcal://{}/{}.ics'.format(host, request.forms.crsid))
-	elif request.forms.vegetarian:
-		return redirect('/' + request.forms.crsid + '-v')
 	else:
-		return redirect('/' + request.forms.crsid)
+		return redirect(app.get_url('user-page', user=user))
 
 
 @app.route('/<user:user>', name="user-page")
