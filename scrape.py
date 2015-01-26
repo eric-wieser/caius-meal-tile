@@ -77,7 +77,7 @@ class Menu(object):
 			lines[1] = '*'
 
 
-		courses = '\n'.join(lines).split('\n*\n')
+		courses = re.split(r'\n\*+\n', '\n'.join(lines))
 		courses = [course.strip() for course in courses]
 
 		# remove obvious line wrapping
@@ -106,7 +106,7 @@ class Menu(object):
 		else:
 			raise ValueError("Could not parse menu", (data, courses))
 
-		starters = re.split(r'(?i)\s*or\s*', starters, 1)
+		starters = re.split(r'(?i)\s*\bor\b\s*', starters, 1)
 		if len(starters) == 2:
 			self.soup, self.starter = starters
 		else:
