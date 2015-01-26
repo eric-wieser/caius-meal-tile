@@ -175,7 +175,10 @@ def calendar_file(user):
 				"CB2 1TA"
 			]))
 			event['uid'] = icalendar.vText(
-				'{}.{}.meal-tile@efw27.user.srcf.net'.format(hall.type.name, hall.date.isoformat())
+				'{}.{}.meal-tile@efw27.user.srcf.net'.format(
+					re.sub(r'\W+', '-', hall.type.name),
+					hall.date.isoformat()
+				)
 			)
 
 			for crsid in sorted(hall.attendees):
