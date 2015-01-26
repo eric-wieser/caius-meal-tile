@@ -20,6 +20,14 @@ if not password:
 		pass
 
 if not password:
+	path = os.path.join(os.path.split(__file__)[0], 'ravenpassword')
+	print path
+	try:
+		password = open(path).read()
+	except:
+		raise
+
+if not password:
 	password = raw_input("Password (leave empty for secure prompt)")
 
 if not password:
@@ -62,8 +70,8 @@ class Menu(object):
 	def load(self, data, is_cafeteria=False):
 		data = re.sub(r'\n', ' ', data)
 		lines = re.split(r'<br(?: ?\/?)>', data)
-		lines = [line.strip() for line in lines]
-		self.raw = '\n'.join(escape(l) for l in lines)
+		lines = [escape(line.strip()) for line in lines]
+		self.raw = '\n'.join(lines)
 
 		if not is_cafeteria and lines[1] == '':
 			lines[1] = '*'
@@ -96,7 +104,7 @@ class Menu(object):
 			else:
 				bread, starters = bread_and_starters
 		else:
-			raise ValueError("Could not parse menu", data)
+			raise ValueError("Could not parse menu", (data, courses))
 
 		starters = re.split(r'(?i)\s*or\s*', starters, 1)
 		if len(starters) == 2:
@@ -162,7 +170,6 @@ class Hall(object):
 
 	@cache.timed(timedelta(minutes=30))
 	def refresh(self):
-		print "Requesting {}".format(self.url)
 		req = s.get(self.url)
 		soup = BeautifulSoup(req.text)
 
@@ -182,6 +189,7 @@ class Hall(object):
 					is_cafeteria='cafeteria' in self.type.name
 				)
 			except Exception as e:
+				print e
 				self.menu.error = e
 		else:
 			self.menu = None
