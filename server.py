@@ -43,6 +43,15 @@ def get_user_halls_from(user, start_date):
 app = Bottle()
 SimpleTemplate.defaults["get_url"] = app.get_url
 
+def get_abs_url(*args, **kwargs):
+	parts = request.urlparts
+	path = app.get_url(*args, **kwargs)
+	return parts._replace(path=path).geturl()
+
+SimpleTemplate.defaults["get_abs_url"] = get_abs_url
+
+
+
 # url routing helper
 User = namedtuple('User', 'crsid vegetarian')
 def user_filter(config):
@@ -96,11 +105,11 @@ def user_page(user):
 	return dict(
 		status=status,
 		hall=hall,
-		user=user.crsid,
+		user=user,
 		vegetarian=user.vegetarian
 	)
 
-@app.route('/<user:user>/browserconfig.xml')
+@app.route('/<user:user>/browserconfig.xml', name='browserconfig')
 @view('browserconfig.xml.tpl')
 def browserconfig(user):
 	return dict(user=user)
@@ -195,13 +204,13 @@ def calendar_file(user):
 	response.content_type = 'text/calendar; charset=UTF-8'
 	return cal.to_ical()
 
+# HACK!
+app.mount('/meal-tile', app)
 
 if __name__ == '__main__':
 	host = 'efw27.user.srcf.net'
 	port = 8101
-	SimpleTemplate.defaults["domain"] = 'http://{}:{}'.format(host, port)
 	app.run(host=host, port=port, debug=True)
 else:
 	import bottle
 	bottle.debug(True)
-	SimpleTemplate.defaults["domain"] = 'http://meal-tile.efw27.user.srcf.net:8989'

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Caius hall - {{user}}</title>
+		<title>Caius hall - {{user.crsid}}</title>
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-		<meta name="application-name" content="Caius hall - {{user}}" />
-		<meta name="msapplication-config" content="/{{user}}/browserconfig.xml" />
+		<meta name="application-name" content="Caius hall - {{user.crsid}}" />
+		<meta name="msapplication-config" content="{{ get_url('browserconfig', user=user) }}" />
 	</head>
 	<style>
 		body {
@@ -108,7 +108,7 @@
 			</div>
 
 			<div class="alert alert-info">
-				<h1>Hello {{user}}!</h1>
+				<h1>Hello {{ user.crsid }}!</h1>
 				<p>Pin this page to your start screen on windows phone 8 to get information about caius hall.</p>
 			</div>
 		</div>

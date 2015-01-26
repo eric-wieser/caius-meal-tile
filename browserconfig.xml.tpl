@@ -2,9 +2,9 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="/images/smalltile.png"/>
-      <square150x150logo src="/images/mediumtile.png"/>
-      <wide310x150logo src="/images/widetile.png"/>
+      <square70x70logo src="{{ get_url('images', path='smalltile.png') }}"/>
+      <square150x150logo src="{{ get_url('images', path='mediumtile.png') }}"/>
+      <wide310x150logo src="{{ get_url('images', path='widetile.png') }}"/>
       <TileColor>#7C431C</TileColor>
     </tile>
     <notification>

@@ -1,11 +1,11 @@
 <tile>
 	<visual lang='en-US' version='2'>
 		<binding template="TileSquare71x71Image" branding="none">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
+			<image id="1" src="{{ get_abs_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
 		</binding>
 
 		<binding template="TileSquare150x150PeekImageAndText01" branding="name">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
+			<image id="1" src="{{ get_abs_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
 			% m = hall.menu
 			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			% if not m:
@@ -22,7 +22,7 @@
 		</binding>
 
 		<binding template="TileWide310x150PeekImage02" branding="name">
-			<image id="1" src="{{ domain }}{{ get_url('images', path='food-{}-wide.png?v=2'.format(status)) }}"/>
+			<image id="1" src="{{ get_abs_url('images', path='food-{}-wide.png?v=2'.format(status)) }}"/>
 			% m = hall.menu
 			<text id="1">{{ "{:%B %d} - {}".format(hall.date, hall.type.name) }}</text>
 			% if not m:
