@@ -1,4 +1,5 @@
 import itertools
+import re
 from datetime import date, datetime, timedelta
 from collections import namedtuple
 
