@@ -72,8 +72,8 @@ def submit():
 	user = User(request.forms.crsid, bool(request.forms.vegetarian))
 
 	if request.forms.calendar:
-		_, host, _, _, _ = request.urlparts
-		return redirect('webcal://{}/{}.ics'.format(host, request.forms.crsid))
+		url = request.urlparts._replace(scheme='webcal', path='{}.ics'.format(user.crsid)).geturl()
+		return redirect(url)
 	else:
 		return redirect(app.get_url('user-page', user=user))
 
