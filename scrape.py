@@ -225,9 +225,10 @@ def get_hall_types():
 	req = s.get(urls.root)
 	soup = BeautifulSoup(req.text)
 
-	header = soup.find('h2')
+	headers = soup.find_all('h2')
+	header = next((h for h in headers if h.get_text() == 'Bookable events'), None)
 
-	assert header.get_text() == 'Bookable events'
+	assert header
 
 	table = header.find_next_sibling('table')
 	a_tags = table.find_all('a')
