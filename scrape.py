@@ -77,7 +77,7 @@ class Menu(object):
 			lines[1] = '*'
 
 
-		courses = re.split(r'\n\*+\n', '\n'.join(lines))
+		courses = re.split(r'\n[*_]+\n', '\n'.join(lines))
 		courses = [course.strip() for course in courses]
 
 		# remove obvious line wrapping
