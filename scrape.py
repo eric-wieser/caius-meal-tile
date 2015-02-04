@@ -66,6 +66,7 @@ class Menu(object):
 		self.dessert = ''
 
 		self.error = None
+		self.raw = ''
 
 	def load(self, data, is_cafeteria=False):
 		data = re.sub(r'\n', ' ', data)
@@ -82,7 +83,7 @@ class Menu(object):
 
 		# remove obvious line wrapping
 		courses = [
-			re.sub(r'\([^)]+\)', lambda l: re.sub('\s+', ' ', l.group(0)), course)
+			re.sub(r'\([^)]+\)', lambda l: re.sub(r'\s+', ' ', l.group(0)), course)
 			for course in courses
 		]
 		courses = [

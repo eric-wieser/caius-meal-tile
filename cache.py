@@ -14,7 +14,7 @@ def timed(delta):
 			try:
 				exc = None
 				res = f(*args, **kwargs)
-			except:
+			except Exception:
 				res = None
 				exc = sys.exc_info()
 			return timed.Entry(at=datetime.now(), value=res, exc=exc)
