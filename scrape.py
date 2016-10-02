@@ -163,6 +163,12 @@ class Hall(object):
 
 		self.refresh()
 
+	def __repr__(self):
+		return "Hall({!r}, {!r})".format(self.date, self.type)
+
+	def __str__(self):
+		return "{} hall on {:%d %b %Y} ({})".format(self.type.name, self.date, self.url)
+
 	def __hash__(self):
 		return hash((self.date, self.type))
 
