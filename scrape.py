@@ -190,7 +190,9 @@ class Hall(object):
 					is_cafeteria='cafeteria' in self.type.name
 				)
 			except Exception as e:
-				print e
+				import traceback
+				print "Parse failure: {}".format(self)
+				print '\t' + traceback.format_exc().replace('\n', '\n\t')
 				self.menu.error = e
 		else:
 			self.menu = None
