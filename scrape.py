@@ -50,7 +50,7 @@ class urls(object):
 
 
 def escape(s):
-	return BeautifulSoup(s).get_text()
+	return BeautifulSoup('<fix-libxml2-issue />'+s).get_text()
 
 
 class Menu(object):
