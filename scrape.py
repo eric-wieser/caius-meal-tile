@@ -154,7 +154,9 @@ class HallError(Exception):
 	pass
 
 class Hall(object):
-	__new__ = cache.timed(timedelta(hours=12))(object.__new__)
+	@cache.timed(timedelta(hours=12))
+	def __new__(self, *args, **kwargs):
+		return super().__new__(self)
 
 	def __init__(self, hall_type, date):
 		self.date = date
