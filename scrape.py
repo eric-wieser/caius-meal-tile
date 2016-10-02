@@ -251,10 +251,7 @@ def get_hall_types():
 	]
 
 
-hall_types = [
-	HallType(name='first', id=322),
-	HallType(name='formal', id=323)
-] + get_hall_types()
+hall_types = get_hall_types()
 
 
 def halls_on(day):
