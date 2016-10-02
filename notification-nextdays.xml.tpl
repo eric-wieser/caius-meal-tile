@@ -4,9 +4,9 @@
 
 % def stringify(data):
 %     return u"{cb} {date:%b %d}{more}".format(
-%         cb=checkbox(data.hall is not None),
+%         cb=checkbox(data.is_booked),
 %         date=data.date,
-%         more=u" - {}".format(data.hall.type.name) if data.hall else u''
+%         more=u" - {}".format(data.hall.type.name) if data.is_booked else u''
 %     )
 % end
 

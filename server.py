@@ -17,20 +17,19 @@ class bunch(object):
 		self.__dict__.update(**kwargs)
 
 def get_day_book_status(user, start_date):
-	for i in range(100):
+	for i in range(30):
 		res = bunch(
 			date=start_date + timedelta(days=i),
-			hall=None
+			hall=None,
+			is_booked=False
 		)
 
-		hall, is_booked = scrape.get_user_hall(user, res.date)
-		if is_booked:
-			res.hall = hall
-		if hall:
-			yield res
+		res.hall, res.is_booked = scrape.get_user_hall(user, res.date)
+
+		yield res
 
 def get_user_halls_from(user, start_date):
-	for i in range(100):
+	for i in range(30):
 		date = start_date + timedelta(days=i)
 
 		hall, is_booked = scrape.get_user_hall(user, date)
@@ -82,7 +81,12 @@ def submit():
 	user = User(request.forms.crsid, bool(request.forms.vegetarian))
 
 	if request.forms.calendar:
-		url = request.urlparts._replace(scheme='webcal', path='{}.ics'.format(user.crsid)).geturl()
+		url = request.urlparts._replace(
+			scheme='webcal',
+			path=request.urlparts.path + '{}.ics'.format(user.crsid)
+		).geturl()
+		calendar_file(user)  # prebuild calendar
+		print "Calendar built for {}".format(user)
 		return redirect(url)
 	else:
 		return redirect(app.get_url('user-page', user=user))
@@ -150,7 +154,7 @@ def notifications_nextdays(user):
 
 	return dict(
 		status=status,
-		days=list(itertools.islice(get_day_book_status(user.crsid, today), 5))
+		days=list(itertools.islice((s for s in get_day_book_status(user.crsid, today) if s.hall), 5))
 	)
 
 @app.route('/<user:user>.ics')
@@ -160,14 +164,14 @@ def calendar_file(user):
 	cal = icalendar.Calendar()
 	cal['prodid'] = '-//Eric Wieser//Caius Meal Tile//EN'
 	cal['version'] = '2.0'
-	cal['x-wr-calname'] = 'Caius Hall' + request.query_string
+	cal['x-wr-calname'] = 'Caius Hall' + ' ({})'.format(request.query.extra) if request.query.extra else ''
 	cal['x-wr-caldesc'] = 'Hall bookings'
 
-	bookings = itertools.islice(get_day_book_status(user.crsid, start_date), 14)
+	bookings = itertools.islice(get_day_book_status(user.crsid, start_date), 7*3)
 
 	for booking in bookings:
 		hall = booking.hall
-		if hall:
+		if booking.is_booked:
 			# get the start time in UTC
 			start_dt = datetime.combine(hall.date, hall.start_time)
 			start_dt = timezone.localize(start_dt).astimezone(pytz.utc)
