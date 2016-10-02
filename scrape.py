@@ -69,7 +69,7 @@ class Menu(object):
 		self.raw = ''
 
 	def load(self, data, is_cafeteria=False):
-		data = re.sub(r'\n', ' ', data)
+		data = re.sub(r'(\n|\r)+', ' ', data)
 		lines = re.split(r'<br(?: ?\/?)>', data)
 		lines = [escape(line.strip()) for line in lines]
 		self.raw = '\n'.join(lines)
