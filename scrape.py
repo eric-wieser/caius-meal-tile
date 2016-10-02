@@ -54,7 +54,9 @@ def escape(s):
 
 
 class Menu(object):
-	def __init__(self):
+	def __init__(self, hall):
+		self.hall = hall
+
 		self.bread = ''
 		self.soup = ''
 		self.starter = ''
@@ -69,6 +71,12 @@ class Menu(object):
 		self.raw = ''
 
 	def load(self, data, is_cafeteria=False):
+		try:
+			self._load(data, is_cafeteria)
+		except Exception as e:
+			raise MenuParseFailure(self.hall, data) from e
+
+	def _load(self, data, is_cafeteria=False):
 		data = re.sub(r'(\n|\r)+', ' ', data)
 		lines = re.split(r'<br(?: ?\/?)>', data)
 		lines = [escape(line.strip()) for line in lines]
@@ -153,6 +161,20 @@ class HallType(namedtuple("HallType", "id name")):
 class HallError(Exception):
 	pass
 
+class MenuParseFailure(Exception):
+	def __init__(self, hall, raw_menu):
+		super().__init__(hall, raw_menu)
+		self.hall = hall
+		self.raw_menu = raw_menu
+
+	def __str__(self):
+		return "in {}\nmenu: [{}]".format(self.hall,
+			self.raw_menu
+				.encode('unicode_escape')
+				.replace(b'<br/>', b'\n<br/>\n')
+				.decode('ascii')
+		)
+
 class Hall(object):
 	@cache.timed(timedelta(hours=12))
 	def __new__(self, *args, **kwargs):
@@ -169,7 +191,7 @@ class Hall(object):
 		return "Hall({!r}, {!r})".format(self.date, self.type)
 
 	def __str__(self):
-		return "{} hall on {:%d %b %Y} ({})".format(self.type.name, self.date, self.url)
+		return "'{} hall' on {:%d %b %Y} ({})".format(self.type.name, self.date, self.url)
 
 	def __hash__(self):
 		return hash((self.date, self.type))
@@ -191,16 +213,15 @@ class Hall(object):
 		menu_elem = soup.find(class_='menu')
 
 		if menu_elem:
-			self.menu = Menu()
+			self.menu = Menu(self)
 			try:
 				self.menu.load(
 					menu_elem.decode_contents(formatter="html"),
 					is_cafeteria='cafeteria' in self.type.name
 				)
-			except Exception as e:
+			except MenuParseFailure as e:
 				import traceback
-				print("Parse failure: {}".format(self))
-				print('\t' + traceback.format_exc().replace('\n', '\n\t'))
+				traceback.print_exc()
 				self.menu.error = e
 		else:
 			self.menu = None
