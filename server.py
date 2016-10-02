@@ -36,7 +36,7 @@ def get_user_halls_from(user, start_date):
 		if hall:
 			yield hall, is_booked
 
-		print "Failed {}".format(i)
+		print("Failed {}".format(i))
 
 
 
@@ -86,7 +86,7 @@ def submit():
 			path=request.urlparts.path + '{}.ics'.format(user.crsid)
 		).geturl()
 		calendar_file(user)  # prebuild calendar
-		print "Calendar built for {}".format(user)
+		print("Calendar built for {}".format(user))
 		return redirect(url)
 	else:
 		return redirect(app.get_url('user-page', user=user))
@@ -105,7 +105,7 @@ def user_page(user):
 	else:
 		status = 'booked'
 
-	print repr(hall)
+	print(repr(hall))
 
 	return dict(
 		status=status,
@@ -131,7 +131,7 @@ def notifications_today(user):
 	else:
 		status = 'booked'
 
-	print repr(hall)
+	print(repr(hall))
 
 	return dict(
 		status=status,

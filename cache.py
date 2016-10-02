@@ -21,7 +21,7 @@ def timed(delta):
 
 		def _deserialize(entry):
 			if entry.exc is not None:
-				raise entry.exc[0], entry.exc[1], entry.exc[2]
+				raise entry.exc[0](entry.exc[1]).with_traceback(entry.exc[2])
 			else:
 				return entry.value
 

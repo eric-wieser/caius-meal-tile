@@ -21,14 +21,14 @@ if not password:
 
 if not password:
 	path = os.path.join(os.path.split(__file__)[0], 'ravenpassword')
-	print path
+	print(path)
 	try:
 		password = open(path).read()
 	except:
 		raise
 
 if not password:
-	password = raw_input("Password (leave empty for secure prompt)")
+	password = input("Password (leave empty for secure prompt)")
 
 if not password:
 	import getpass
@@ -50,7 +50,7 @@ class urls(object):
 
 
 def escape(s):
-	return BeautifulSoup('<fix-libxml2-issue />'+s).get_text()
+	return BeautifulSoup('<fix-libxml2-issue />'+s, 'html.parser').get_text()
 
 
 class Menu(object):
@@ -135,7 +135,7 @@ class Menu(object):
 		self.starter = escape(self.starter)
 		self.main = escape(self.main)
 		self.main_v = escape(self.main_v)
-		self.sides = map(escape, self.sides)
+		self.sides = list(map(escape, self.sides))
 		self.dessert = escape(self.dessert)
 
 		return self
@@ -178,7 +178,7 @@ class Hall(object):
 	@cache.timed(timedelta(minutes=30))
 	def refresh(self):
 		req = s.get(self.url)
-		soup = BeautifulSoup(req.text)
+		soup = BeautifulSoup(req.text, 'html.parser')
 
 
 		error_elem = soup.find(class_='error')
@@ -197,8 +197,8 @@ class Hall(object):
 				)
 			except Exception as e:
 				import traceback
-				print "Parse failure: {}".format(self)
-				print '\t' + traceback.format_exc().replace('\n', '\n\t')
+				print("Parse failure: {}".format(self))
+				print('\t' + traceback.format_exc().replace('\n', '\n\t'))
 				self.menu.error = e
 		else:
 			self.menu = None
@@ -232,7 +232,7 @@ def normalize_hall_name(name):
 
 def get_hall_types():
 	req = s.get(urls.root)
-	soup = BeautifulSoup(req.text)
+	soup = BeautifulSoup(req.text, 'html.parser')
 
 	headers = soup.find_all('h2')
 	header = next((h for h in headers if h.get_text() == 'Bookable events'), None)
