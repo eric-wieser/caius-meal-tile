@@ -129,7 +129,7 @@ class Menu(object):
 
 		self.sides = [side.strip() for side in re.split(r'\n+', self.sides)]
 
-		veg_courses = re.split(r'(?i)\n+Vegetarian\s*(?:-\s*\n?|\n)', dessert)
+		veg_courses = re.split(r'(?i)\n+Vegetarian\s*(?:[-:]\s*\n?|\n)', dessert)
 		if veg_courses:
 			self.dessert = veg_courses[0]
 			self.main_v = re.sub(r'\s+', ' ', veg_courses[1])
