@@ -133,6 +133,7 @@ def notifications_today(user):
 
 	print(repr(hall))
 
+	print("Notifications (today) built for {}".format(user))
 	return dict(
 		status=status,
 		hall=hall,
@@ -152,6 +153,7 @@ def notifications_nextdays(user):
 	else:
 		status = 'booked'
 
+	print("Notifications (nextdays) built for {}".format(user))
 	return dict(
 		status=status,
 		days=list(itertools.islice((s for s in get_day_book_status(user.crsid, today) if s.hall), 5))
