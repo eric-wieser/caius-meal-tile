@@ -171,29 +171,32 @@ def calendar_file(user):
 
 	bookings = itertools.islice(get_day_book_status(user.crsid, start_date), 7*3)
 
+	update_at = pytz.utc.localize(datetime.utcnow())
+
 	for booking in bookings:
 		hall = booking.hall
 		if booking.is_booked:
 			# get the start time in UTC
 			start_dt = datetime.combine(hall.date, hall.start_time)
-			start_dt = timezone.localize(start_dt).astimezone(pytz.utc)
+			start_dt = timezone.localize(start_dt)
 
-			event = icalendar.Event()
-			event['summary'] = icalendar.vText(hall.type.full_name.capitalize())
-			event['dtstart'] = icalendar.vDatetime(start_dt)
-			event['dtend'] = icalendar.vDatetime(start_dt + timedelta(minutes=50))
-			event['dtstamp'] = icalendar.vDatetime(datetime.now())
-			event['description'] = icalendar.vText(hall.menu.raw if hall.menu else 'No menu')
-			event['location'] = icalendar.vText(', '.join([
-				"Gonville & Caius: Old Courts",
-				"Trinity St",
-				"Cambridge",
-				"CB2 1TA"
-			]))
-			event['uid'] = icalendar.vText(
-				'{}.{}.meal-tile@efw27.user.srcf.net'.format(
-					re.sub(r'\W+', '-', hall.type.name),
-					hall.date.isoformat()
+			event = icalendar.Event(
+				summary=icalendar.vText(hall.type.full_name.capitalize()),
+				dtstart=icalendar.vDatetime(start_dt),
+				dtend=icalendar.vDatetime(start_dt + timedelta(minutes=50)),
+				dtstamp=icalendar.vDatetime(update_at),
+				description=icalendar.vText(hall.menu.raw if hall.menu else 'No menu'),
+				location=icalendar.vText(', '.join([
+					"Gonville & Caius: Old Courts",
+					"Trinity St",
+					"Cambridge",
+					"CB2 1TA"
+				])),
+				uid=icalendar.vText(
+					'{}.{}.meal-tile@efw27.user.srcf.net'.format(
+						re.sub(r'\W+', '-', hall.type.name),
+						hall.date.isoformat()
+					)
 				)
 			)
 
