@@ -1,15 +1,16 @@
-% def checkbox(checked):
-%     return u'\u2713' if checked else u'\u2718'
-% end
+<%
+def checkbox(checked):
+    return u'\u2713' if checked else u'\u2718'
+end
 
-% def stringify(data):
-%     return u"{cb} {date:%b %d}{more}".format(
-%         cb=checkbox(data.is_booked),
-%         date=data.date,
-%         more=u" - {}".format(data.hall.type.name) if data.is_booked else u''
-%     )
-% end
-
+def stringify(data):
+    return u"{cb} {date:%b %d}{more}".format(
+        cb=checkbox(data.is_booked),
+        date=data.date,
+        more=u" - {}".format(data.hall.type.name) if data.is_booked else u''
+    )
+end
+%>
 <tile>
 	<visual lang='en-US' version='2'>
 		<binding template="TileSquare71x71Image" branding="none">
