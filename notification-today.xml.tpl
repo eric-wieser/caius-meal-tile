@@ -14,7 +14,8 @@
 				<text hint-style="captionSubtle" hint-wrap="true">error parsing menu</text>
 			% elif m:
 				<text hint-style="captionSubtle">{{ m.starter }}</text>
-				<text hint-style="captionSubtle">{{ m.main if not vegetarian else m.main_v }}</text>
+				<text hint-style="captionSubtle" hint-wrap="true">{{ m.main if not vegetarian else m.main_v }}</text>
+				<text hint-style="captionSubtle">{{ ', '.join(m.sides) }}</text>
 				<text hint-style="captionSubtle">{{ m.dessert }}</text>
 			% end
 		</binding>
