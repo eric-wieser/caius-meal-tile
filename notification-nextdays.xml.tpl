@@ -19,13 +19,13 @@ end
 
 		<binding template="TileMedium" branding="name">
 			% for data in days:
-				<text hint-style="body">{{stringify(data)}}</text>
+				<text hint-style="caption">{{stringify(data)}}</text>
 			% end
 		</binding>
 
 		<binding template="TileWide" branding="name">
 			% for data in days:
-				<text hint-style="body">{{stringify(data)}}</text>
+				<text hint-style="caption">{{stringify(data)}}</text>
 			% end
 		</binding>
 
