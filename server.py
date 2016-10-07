@@ -185,7 +185,12 @@ def calendar_file(user):
 				dtstart=icalendar.vDatetime(start_dt),
 				dtend=icalendar.vDatetime(start_dt + timedelta(minutes=50)),
 				dtstamp=icalendar.vDatetime(update_at),
-				description=icalendar.vText(hall.menu.raw if hall.menu else 'No menu'),
+				description=icalendar.vText(
+					'{url}\n\n{menu}'.format(
+						url=hall.url,
+						menu=hall.menu.raw if hall.menu else 'No menu'
+					)
+				),
 				location=icalendar.vText(', '.join([
 					"Gonville & Caius: Old Courts",
 					"Trinity St",
