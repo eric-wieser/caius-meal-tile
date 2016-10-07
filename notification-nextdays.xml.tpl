@@ -13,6 +13,22 @@ end
 %>
 <tile>
 	<visual lang='en-US' version='2'>
+		<binding template="TileSmall">
+			<image placement="background" src="{{ get_abs_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
+		</binding>
+
+		<binding template="TileMedium" branding="name">
+			% for data in days:
+				<text hint-style="body">{{stringify(data)}}</text>
+			% end
+		</binding>
+
+		<binding template="TileWide" branding="name">
+			% for data in days:
+				<text hint-style="body">{{stringify(data)}}</text>
+			% end
+		</binding>
+
 		<binding template="TileSquare71x71Image" branding="none">
 			<image id="1" src="{{ get_abs_url('images', path='food-{}.png?v=2'.format(status)) }}"/>
 		</binding>
