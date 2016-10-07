@@ -156,7 +156,7 @@ def notifications_nextdays(user):
 	print("Notifications (nextdays) built for {}".format(user))
 	return dict(
 		status=status,
-		days=list(itertools.islice((s for s in get_day_book_status(user.crsid, today) if s.hall), 5))
+		days=list(itertools.islice((s for s in get_day_book_status(user.crsid, today) if s.hall), 7))
 	)
 
 @app.route('/<user:user>.ics')
